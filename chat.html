@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TMessenger</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0;
+           margin: 0; height: 100vh; display: flex; overflow: hidden; }
+
+    .sidebar { width: 280px; background: #1e293b; border-right: 1px solid #334155;
+               display: flex; flex-direction: column; }
+    .sidebar h2 { padding: 16px; margin: 0; font-size: 16px; border-bottom: 1px solid #334155; }
+    .me { padding: 12px 16px; font-size: 13px; color: #94a3b8;
+          border-bottom: 1px solid #334155; display: flex; justify-content: space-between;
+          gap: 8px; }
+    .me a { color: #f87171; text-decoration: none; cursor: pointer; flex-shrink: 0; }
+    .search { padding: 12px; border-bottom: 1px solid #334155; }
+    .search input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #334155;
+                    background: #0f172a; color: #e2e8f0; }
+    .list { flex: 1; overflow-y: auto; }
+    .item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1e293b; }
+    .item:hover { background: #334155; }
+    .item.active { background: #334155; }
+    .item .name { font-weight: 600; font-size: 14px; }
+    .item .sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .item.global .name::before { content: '🌐 '; }
+
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .header { padding: 16px; border-bottom: 1px solid #334155; font-weight: 600;
+              display: flex; align-items: center; gap: 8px; }
+    .back { display: none; background: none; border: none; color: #60a5fa;
+            font-size: 20px; cursor: pointer; padding: 0 4px 0 0; }
+    .messages { flex: 1; overflow-y: auto; padding: 16px; }
+    .msg { margin-bottom: 12px; max-width: 75%; }
+    .msg .who { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+    .msg .bubble { background: #334155; padding: 8px 12px; border-radius: 12px;
+                   word-wrap: break-word; }
+    .msg.own { margin-left: auto; }
+    .msg.own .bubble { background: #3b82f6; }
+    .msg.own .who { text-align: right; }
+    .composer { padding: 12px; border-top: 1px solid #334155; display: flex; gap: 8px; }
+    .composer input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #334155;
+                      background: #0f172a; color: #e2e8f0; min-width: 0; }
+    .composer button { padding: 10px 20px; border: none; border-radius: 6px;
+                       background: #3b82f6; color: white; font-weight: 600; cursor: pointer; }
+    .composer button:disabled { opacity: 0.5; cursor: default; }
+    .empty { padding: 32px; text-align: center; color: #64748b; }
+
+    /* Мобильная версия: показываем либо список, либо чат */
+    @media (max-width: 640px) {
+      .sidebar { width: 100%; }
+      .main { display: none; }
+      body.show-chat .sidebar { display: none; }
+      body.show-chat .main { display: flex; }
+      .back { display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>TMessenger</h2>
+    <div class="me">
+      <span id="me-info"></span>
+      <a onclick="logout()">Выйти</a>
+    </div>
+    <div class="search">
+      <input id="search" placeholder="Поиск по юзеру...">
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <button class="back" onclick="closeChat()">←</button>
+      <span id="chat-header">Выберите чат</span>
+    </div>
+    <div class="messages" id="messages">
+      <div class="empty">Выберите собеседника или группу «Все люди»</div>
+    </div>
+    <div class="composer">
+      <input id="input" placeholder="Сообщение..." disabled>
+      <button onclick="send()" disabled id="send-btn">→</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
+  <script src="app.js"></script>
+  <script>
+    let me = null;
+    let globalGroupId = null;
+    let currentChat = null;
+    let channel = null;
+
+    // ---------- Инициализация ----------
+    async function init() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { location.href = 'index.html'; return; }
+
+      const { data: profile, error } = await sb.from('profiles')
+        .select('*').eq('id', session.user.id).single();
+
+      if (error || !profile) {
+        // Профиль не создался триггером — создаём вручную
+        const meta = session.user.user_metadata || {};
+        const { data: created } = await sb.from('profiles').insert({
+          id: session.user.id,
+          username: meta.username || session.user.email.split('@')[0],
+          nickname: meta.nickname || meta.username || 'Пользователь'
+        }).select().single();
+        me = created;
+      } else {
+        me = profile;
+      }
+
+      document.getElementById('me-info').textContent =
+        me.nickname + ' (@' + me.username + ')';
+
+      await ensureGlobalGroup();
+      await renderList();
+      subscribeToMessages();
+    }
+
+    async function ensureGlobalGroup() {
+      let { data: g } = await sb.from('groups')
+        .select('*').eq('name', 'Все люди').limit(1).maybeSingle();
+
+      if (!g) {
+        const { data: created } = await sb.from('groups')
+          .insert({ name: 'Все люди', owner_id: me.id })
+          .select().single();
+        g = created;
+      }
+      globalGroupId = g.id;
+
+      await sb.from('group_members').upsert(
+        { group_id: globalGroupId, user_id: me.id },
+        { onConflict: 'group_id,user_id' }
+      );
+    }
+
+    // ---------- Поиск и список ----------
+    let searchTimer = null;
+    document.getElementById('search').addEventListener('input', e => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => renderList(e.target.value.trim()), 250);
+    });
+
+    async function renderList(searchQuery = '') {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+
+      if (!searchQuery) {
+        const g = document.createElement('div');
+        g.className = 'item global';
+        if (currentChat?.type === 'group' && currentChat.id === globalGroupId) {
+          g.classList.add('active');
+        }
+        g.innerHTML = `<div class="name">Все люди</div><div class="sub">Общий чат</div>`;
+        g.onclick = () => openGroup(globalGroupId, 'Все люди');
+        list.appendChild(g);
+      }
+
+      let query = sb.from('profiles').select('*').neq('id', me.id);
+      if (searchQuery) query = query.ilike('username', `%${searchQuery}%`);
+      const { data: users } = await query.limit(50);
+
+      (users || []).forEach(u => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        if (currentChat?.type === 'user' && currentChat.id === u.id) {
+          el.classList.add('active');
+        }
+        el.innerHTML = `<div class="name"></div><div class="sub"></div>`;
+        el.querySelector('.name').textContent = u.nickname;
+        el.querySelector('.sub').textContent = '@' + u.username;
+        el.onclick = () => openUser(u);
+        list.appendChild(el);
+      });
+
+      if (searchQuery && (!users || users.length === 0)) {
+        list.innerHTML = '<div class="empty">Никого не найдено</div>';
+      }
+    }
+
+    // ---------- Открытие чатов ----------
+    function openGroup(id, name) {
+      currentChat = { type: 'group', id, name };
+      document.getElementById('chat-header').textContent = '🌐 ' + name;
+      enableComposer();
+      loadMessages();
+      document.body.classList.add('show-chat');
+      renderList(document.getElementById('search').value.trim());
+    }
+
+    function openUser(u) {
+      currentChat = { type: 'user', id: u.id, name: u.nickname };
+      document.getElementById('chat-header').textContent =
+        u.nickname + ' (@' + u.username + ')';
+      enableComposer();
+      loadMessages();
+      document.body.classList.add('show-chat');
+      renderList(document.getElementById('search').value.trim());
+    }
+
+    function closeChat() {
+      document.body.classList.remove('show-chat');
+    }
+
+    function enableComposer() {
+      document.getElementById('input').disabled = false;
+      document.getElementById('send-btn').disabled = false;
+    }
+
+    // ---------- Сообщения ----------
+    async function loadMessages() {
+      const box = document.getElementById('messages');
+      box.innerHTML = '<div class="empty">Загрузка...</div>';
+
+      let q = sb.from('messages').select('*')
+        .order('created_at', { ascending: true }).limit(200);
+
+      if (currentChat.type === 'group') {
+        q = q.eq('group_id', currentChat.id);
+      } else {
+        q = q.or(
+          `and(sender_id.eq.${me.id},receiver_id.eq.${currentChat.id}),` +
+          `and(sender_id.eq.${currentChat.id},receiver_id.eq.${me.id})`
+        );
+      }
+
+      const { data, error } = await q;
+      box.innerHTML = '';
+
+      if (error) {
+        box.innerHTML = '<div class="empty">Ошибка: ' + error.message + '</div>';
+        return;
+      }
+      if (!data || data.length === 0) {
+        box.innerHTML = '<div class="empty">Сообщений пока нет</div>';
+        return;
+      }
+      data.forEach(m => appendMessage(m));
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function appendMessage(m) {
+      const box = document.getElementById('messages');
+      const empty = box.querySelector('.empty');
+      if (empty) empty.remove();
+
+      const own = m.sender_id === me.id;
+      const div = document.createElement('div');
+      div.className = 'msg' + (own ? ' own' : '');
+
+      const who = document.createElement('div');
+      who.className = 'who';
+      who.textContent = own ? 'Вы' : (m._nickname || '...');
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = m.content;
+
+      div.appendChild(who);
+      div.appendChild(bubble);
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Подтягиваем ники одним запросом
+    async function fillNicknames(msgs) {
+      const ids = [...new Set(msgs.map(m => m.sender_id))].filter(id => id !== me.id);
+      if (!ids.length) return;
+      const { data } = await sb.from('profiles').select('id,nickname').in('id', ids);
+      const map = {};
+      (data || []).forEach(p => map[p.id] = p.nickname);
+      msgs.forEach(m => { m._nickname = map[m.sender_id] || '...'; });
+    }
+
+    // ---------- Отправка ----------
+    async function send() {
+      const input = document.getElementById('input');
+      const content = input.value.trim();
+      if (!content || !currentChat) return;
+      input.value = '';
+
+      const row = { sender_id: me.id, content };
+      if (currentChat.type === 'group') row.group_id = currentChat.id;
+      else row.receiver_id = currentChat.id;
+
+      const { error } = await sb.from('messages').insert(row);
+      if (error) { alert('Ошибка отправки: ' + error.message); return; }
+
+      // Сразу показать у себя
+      appendMessage({ ...row, _nickname: me.nickname });
+    }
+
+    document.getElementById('input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') send();
+    });
+
+    // ---------- Realtime ----------
+    function subscribeToMessages() {
+      channel = sb.channel('messages-rt')
+        .on('postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          async (payload) => {
+            const m = payload.new;
+            if (!currentChat) return;
+
+            const relevant =
+              (currentChat.type === 'group' && m.group_id === currentChat.id) ||
+              (currentChat.type === 'user' && (
+                (m.sender_id === me.id && m.receiver_id === currentChat.id) ||
+                (m.sender_id === currentChat.id && m.receiver_id === me.id)
+              ));
+            if (!relevant) return;
+            if (m.sender_id === me.id) return;
+
+            if (!m._nickname) await fillNicknames([m]);
+            appendMessage(m);
+          })
+        .subscribe();
+    }
+
+    function logout() {
+      sb.auth.signOut().then(() => location.href = 'index.html');
+    }
+
+    init();
+  </script>
+</body>
+</html>

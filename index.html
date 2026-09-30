@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TMessenger — Регистрация</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0;
+           display: flex; align-items: center; justify-content: center;
+           min-height: 100vh; margin: 0; padding: 16px; }
+    .card { background: #1e293b; padding: 28px; border-radius: 12px;
+            width: 100%; max-width: 380px; }
+    h1 { margin: 0 0 20px; font-size: 22px; }
+    label { display: block; font-size: 13px; margin: 12px 0 4px; color: #94a3b8; }
+    input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #334155;
+            background: #0f172a; color: #e2e8f0; box-sizing: border-box; font-size: 16px; }
+    button { width: 100%; margin-top: 20px; padding: 14px; border: none; border-radius: 6px;
+             background: #3b82f6; color: white; font-weight: 600; cursor: pointer;
+             font-size: 16px; }
+    button:hover { background: #2563eb; }
+    .msg { margin-top: 16px; font-size: 14px; }
+    .msg.err { color: #f87171; }
+    .msg.ok { color: #4ade80; }
+    a { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Регистрация в TMessenger</h1>
+    <label>Ник (отображаемое имя)</label>
+    <input id="nickname" placeholder="Иван Иванов" autocomplete="nickname">
+    <label>Юзер (уникальный логин, латиница)</label>
+    <input id="username" placeholder="ivan123" autocomplete="username">
+    <label>Пароль</label>
+    <input id="password" type="password" placeholder="Минимум 6 символов" autocomplete="new-password">
+    <button onclick="register()">Создать аккаунт</button>
+    <div id="msg" class="msg"></div>
+    <p style="margin-top:16px;font-size:13px;">
+      Уже есть аккаунт? <a href="index.html">Войти</a>
+    </p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
+  <script src="app.js"></script>
+  <script>
+    async function register() {
+      const nickname = document.getElementById('nickname').value.trim();
+      const username = document.getElementById('username').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('msg');
+      msg.className = 'msg'; msg.textContent = '';
+
+      if (!nickname || !username || !password) {
+        msg.textContent = 'Заполните все поля'; msg.className = 'msg err'; return;
+      }
+      if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+        msg.textContent = 'Юзер: 3-20 символов, латиница, цифры, _';
+        msg.className = 'msg err'; return;
+      }
+      if (password.length < 6) {
+        msg.textContent = 'Пароль минимум 6 символов';
+        msg.className = 'msg err'; return;
+      }
+
+      msg.textContent = 'Создаём аккаунт...';
+
+      const { data, error } = await sb.auth.signUp({
+        email: usernameToEmail(username),
+        password,
+        options: { data: { username, nickname } }
+      });
+
+      if (error) {
+        msg.textContent = 'Ошибка: ' + error.message;
+        msg.className = 'msg err';
+        return;
+      }
+
+      // Если сессия сразу есть — можно входить
+      if (data.session) {
+        msg.textContent = 'Готово! Переходим в чат...';
+        msg.className = 'msg ok';
+        setTimeout(() => location.href = 'chat.html', 800);
+      } else {
+        msg.textContent = 'Аккаунт создан. Войдите на странице входа.';
+        msg.className = 'msg ok';
+        setTimeout(() => location.href = 'index.html', 1200);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TMessenger — Вход</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0;
+           display: flex; align-items: center; justify-content: center;
+           min-height: 100vh; margin: 0; padding: 16px; }
+    .card { background: #1e293b; padding: 28px; border-radius: 12px;
+            width: 100%; max-width: 380px; }
+    h1 { margin: 0 0 20px; font-size: 22px; }
+    label { display: block; font-size: 13px; margin: 12px 0 4px; color: #94a3b8; }
+    input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #334155;
+            background: #0f172a; color: #e2e8f0; box-sizing: border-box; font-size: 16px; }
+    button { width: 100%; margin-top: 20px; padding: 14px; border: none; border-radius: 6px;
+             background: #3b82f6; color: white; font-weight: 600; cursor: pointer;
+             font-size: 16px; }
+    button:hover { background: #2563eb; }
+    .msg { margin-top: 16px; font-size: 14px; }
+    .msg.err { color: #f87171; }
+    a { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Вход в TMessenger</h1>
+    <label>Юзер</label>
+    <input id="username" placeholder="ivan123" autocomplete="username">
+    <label>Пароль</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <button onclick="login()">Войти</button>
+    <div id="msg" class="msg"></div>
+    <p style="margin-top:16px;font-size:13px;">
+      Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+    </p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
+  <script src="app.js"></script>
+  <script>
+    // Если уже вошли — сразу в чат
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) location.href = 'chat.html';
+    });
+
+    async function login() {
+      const username = document.getElementById('username').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('msg');
+      msg.className = 'msg'; msg.textContent = '';
+
+      if (!username || !password) {
+        msg.textContent = 'Введите юзер и пароль';
+        msg.className = 'msg err'; return;
+      }
+
+      msg.textContent = 'Входим...';
+
+      const { error } = await sb.auth.signInWithPassword({
+        email: usernameToEmail(username),
+        password
+      });
+
+      if (error) {
+        msg.textContent = 'Неверный юзер или пароль';
+        msg.className = 'msg err';
+      } else {
+        location.href = 'chat.html';
+      }
+    }
+
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') login();
+    });
+  </script>
+</body>
+</html>
