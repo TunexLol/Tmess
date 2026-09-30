@@ -20,7 +20,7 @@
       width: 100%;
     }
 
-    /* ---------- Sidebar ---------- */
+    /* Sidebar */
     .sidebar {
       width: 280px;
       background: #1e293b;
@@ -29,211 +29,148 @@
       flex-direction: column;
     }
     .sidebar h2 {
-      padding: 16px;
-      margin: 0;
-      font-size: 16px;
+      padding: 16px; margin: 0; font-size: 16px;
       border-bottom: 1px solid #334155;
+      display: flex; justify-content: space-between; align-items: center;
     }
+    .badge {
+      background: #ef4444; color: white; font-size: 11px;
+      padding: 2px 8px; border-radius: 10px; font-weight: 600;
+    }
+
     .me {
-      padding: 12px 16px;
-      font-size: 13px;
-      color: #94a3b8;
+      padding: 12px 16px; font-size: 13px; color: #94a3b8;
       border-bottom: 1px solid #334155;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
-    .me-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-    }
-    .me-info span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .me-info { display: flex; align-items: center; gap: 8px; min-width: 0; cursor: pointer; }
+    .me-info span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .me a { color: #f87171; text-decoration: none; cursor: pointer; flex-shrink: 0; font-size: 12px; }
 
     .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #334155;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      color: #94a3b8;
-      flex-shrink: 0;
-      overflow: hidden;
-      font-size: 14px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #334155; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #94a3b8; flex-shrink: 0;
+      overflow: hidden; font-size: 14px;
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
     .avatar.lg { width: 80px; height: 80px; font-size: 32px; }
 
     .search { padding: 12px; border-bottom: 1px solid #334155; }
     .search input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #e2e8f0;
+      width: 100%; padding: 8px; border-radius: 6px;
+      border: 1px solid #334155; background: #0f172a; color: #e2e8f0;
     }
+
     .list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+    .section-title {
+      padding: 8px 16px; font-size: 11px; text-transform: uppercase;
+      color: #64748b; letter-spacing: 0.5px;
+      background: #0f172a;
+    }
+
     .item {
-      padding: 12px 16px;
-      cursor: pointer;
+      padding: 12px 16px; cursor: pointer;
       border-bottom: 1px solid #1e293b;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
     }
     .item:hover { background: #334155; }
     .item.active { background: #334155; }
     .item .info { min-width: 0; flex: 1; }
-    .item .name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item .name {
+      font-weight: 600; font-size: 14px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
     .item .sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
     .item.global .name::before { content: '🌐 '; }
 
-    /* ---------- Main ---------- */
+    /* Кнопки действий в поиске */
+    .action-btn {
+      padding: 6px 12px; border-radius: 6px; border: none;
+      font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+    }
+    .action-add { background: #3b82f6; color: white; }
+    .action-pending { background: #475569; color: #cbd5e1; cursor: default; }
+    .action-accept { background: #22c55e; color: white; }
+    .action-reject { background: #334155; color: #e2e8f0; }
+    .action-write { background: #334155; color: #e2e8f0; }
+
+    /* Main */
     .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
     .header {
-      padding: 12px 16px;
-      border-bottom: 1px solid #334155;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      padding: 12px 16px; border-bottom: 1px solid #334155;
+      font-weight: 600; display: flex; align-items: center; gap: 8px;
       flex-shrink: 0;
     }
     .back {
-      display: none;
-      background: none;
-      border: none;
-      color: #60a5fa;
-      font-size: 22px;
-      cursor: pointer;
-      padding: 0 6px 0 0;
-      line-height: 1;
+      display: none; background: none; border: none;
+      color: #60a5fa; font-size: 22px; cursor: pointer;
+      padding: 0 6px 0 0; line-height: 1;
     }
     .messages {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
       padding: 16px;
     }
     .msg { margin-bottom: 12px; max-width: 75%; display: flex; gap: 8px; }
     .msg .body { min-width: 0; }
     .msg .who { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
     .msg .bubble {
-      background: #334155;
-      padding: 8px 12px;
-      border-radius: 12px;
-      word-wrap: break-word;
+      background: #334155; padding: 8px 12px;
+      border-radius: 12px; word-wrap: break-word;
     }
     .msg.own { margin-left: auto; flex-direction: row-reverse; }
     .msg.own .bubble { background: #3b82f6; }
     .msg.own .who { text-align: right; }
 
     .composer {
-      padding: 12px;
-      border-top: 1px solid #334155;
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
+      padding: 12px; border-top: 1px solid #334155;
+      display: flex; gap: 8px; flex-shrink: 0;
     }
     .composer input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #e2e8f0;
-      min-width: 0;
+      flex: 1; padding: 10px; border-radius: 6px;
+      border: 1px solid #334155; background: #0f172a;
+      color: #e2e8f0; min-width: 0;
     }
     .composer button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      background: #3b82f6;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
+      padding: 10px 20px; border: none; border-radius: 6px;
+      background: #3b82f6; color: white; font-weight: 600; cursor: pointer;
     }
     .composer button:disabled { opacity: 0.5; cursor: default; }
     .empty { padding: 32px; text-align: center; color: #64748b; }
 
-    /* ---------- Модальное окно профиля ---------- */
+    /* Модальное окно профиля */
     .modal-bg {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 1000;
+      align-items: center; justify-content: center; padding: 16px;
     }
     .modal-bg.open { display: flex; }
     .modal {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 24px;
-      width: 100%;
-      max-width: 400px;
-      max-height: 90vh;
-      overflow-y: auto;
+      background: #1e293b; border-radius: 12px; padding: 24px;
+      width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;
     }
     .modal h3 { margin: 0 0 20px; font-size: 18px; }
     .modal label { display: block; font-size: 13px; margin: 12px 0 4px; color: #94a3b8; }
     .modal input[type=text] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #e2e8f0;
-      font-size: 15px;
+      width: 100%; padding: 10px; border-radius: 6px;
+      border: 1px solid #334155; background: #0f172a;
+      color: #e2e8f0; font-size: 15px;
     }
-    .modal input:disabled {
-      background: #0f172a;
-      color: #64748b;
-      cursor: not-allowed;
-    }
+    .modal input:disabled { background: #0f172a; color: #64748b; cursor: not-allowed; }
     .avatar-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; margin-bottom: 8px;
     }
     .avatar-edit-btn {
-      padding: 8px 16px;
-      background: #334155;
-      color: #e2e8f0;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      border: none;
+      padding: 8px 16px; background: #334155; color: #e2e8f0;
+      border-radius: 6px; cursor: pointer; font-size: 13px; border: none;
     }
     .avatar-edit-btn:hover { background: #475569; }
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 20px;
-    }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
     .modal-actions button {
-      flex: 1;
-      padding: 12px;
-      border-radius: 6px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 15px;
+      flex: 1; padding: 12px; border-radius: 6px; border: none;
+      font-weight: 600; cursor: pointer; font-size: 15px;
     }
     .btn-save { background: #3b82f6; color: white; }
     .btn-save:hover { background: #2563eb; }
@@ -254,9 +191,12 @@
 </head>
 <body>
   <div class="sidebar">
-    <h2>TMessenger</h2>
+    <h2>
+      <span>TMessenger</span>
+      <span id="requests-badge" class="badge" style="display:none">0</span>
+    </h2>
     <div class="me">
-      <div class="me-info">
+      <div class="me-info" onclick="openProfile()">
         <div class="avatar" id="me-avatar"></div>
         <span id="me-info">Загрузка...</span>
       </div>
@@ -288,19 +228,14 @@
       <h3>Профиль</h3>
       <div class="avatar-block">
         <div class="avatar lg" id="profile-avatar"></div>
-        <label for="avatar-file" class="avatar-edit-btn">
-          Изменить фото
-        </label>
+        <label for="avatar-file" class="avatar-edit-btn">Изменить фото</label>
         <input type="file" id="avatar-file" accept="image/*"
                style="display:none" onchange="uploadAvatar(this)">
       </div>
-
       <label>Ник (отображаемое имя)</label>
       <input type="text" id="profile-nickname" placeholder="Ваш ник">
-
       <label>Юзер (нельзя изменить)</label>
       <input type="text" id="profile-username" disabled>
-
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeProfile()">Отмена</button>
         <button class="btn-save" onclick="saveProfile()">Сохранить</button>
@@ -315,19 +250,17 @@
     let me = null;
     let globalGroupId = null;
     let currentChat = null;
-    let channel = null;
+    let channelMessages = null;
+    let channelRequests = null;
+    let friends = [];           // массив id друзей
+    let outgoingRequests = [];  // id, кому я отправил
+    let incomingRequests = [];  // заявки мне
 
     // ---------- Утилиты ----------
     function initials(name) {
       if (!name) return '?';
       return name.trim().charAt(0).toUpperCase();
     }
-
-    function avatarHTML(url, name, cls) {
-      if (url) return `<img src="${url}" alt="">`;
-      return initials(name);
-    }
-
     function setAvatar(el, url, name) {
       el.innerHTML = '';
       if (url) {
@@ -360,10 +293,11 @@
       }
 
       renderMe();
-
       await ensureGlobalGroup();
+      await loadFriendsData();
       await renderList();
       subscribeToMessages();
+      subscribeToRequests();
     }
 
     function renderMe() {
@@ -375,20 +309,53 @@
     async function ensureGlobalGroup() {
       let { data: g } = await sb.from('groups')
         .select('*').eq('name', 'Все люди').limit(1).maybeSingle();
-
       if (!g) {
         const { data: created } = await sb.from('groups')
           .insert({ name: 'Все люди', owner_id: me.id })
           .select().single();
         g = created;
       }
-      if (!g) { console.error('Не удалось создать группу'); return; }
+      if (!g) return;
       globalGroupId = g.id;
-
       await sb.from('group_members').upsert(
         { group_id: globalGroupId, user_id: me.id },
         { onConflict: 'group_id,user_id' }
       );
+    }
+
+    // ---------- Загрузка данных о друзьях ----------
+    async function loadFriendsData() {
+      const { data, error } = await sb.from('friend_requests')
+        .select('*')
+        .or(`from_user.eq.${me.id},to_user.eq.${me.id}`);
+
+      if (error) {
+        console.error('Ошибка загрузки заявок:', error);
+        return;
+      }
+
+      friends = [];
+      outgoingRequests = [];
+      incomingRequests = [];
+
+      (data || []).forEach(r => {
+        if (r.status === 'accepted') {
+          const friendId = r.from_user === me.id ? r.to_user : r.from_user;
+          friends.push(friendId);
+        } else if (r.status === 'pending') {
+          if (r.from_user === me.id) outgoingRequests.push(r.to_user);
+          else incomingRequests.push(r.from_user);
+        }
+      });
+
+      // Обновляем бейдж с количеством входящих
+      const badge = document.getElementById('requests-badge');
+      if (incomingRequests.length > 0) {
+        badge.textContent = incomingRequests.length;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
     }
 
     // ---------- Список чатов ----------
@@ -402,53 +369,194 @@
       const list = document.getElementById('list');
       list.innerHTML = '';
 
-      if (!searchQuery) {
-        const g = document.createElement('div');
-        g.className = 'item global';
-        if (currentChat?.type === 'group' && currentChat.id === globalGroupId) {
-          g.classList.add('active');
-        }
-        g.innerHTML = `<div class="info"><div class="name">Все люди</div>
-          <div class="sub">Общий чат</div></div>`;
-        g.onclick = () => openGroup(globalGroupId, 'Все люди');
-        list.appendChild(g);
-      }
+      // Режим поиска
+      if (searchQuery) {
+        list.innerHTML = '<div class="section-title">Результаты поиска</div>';
+        const { data: users } = await sb.from('profiles').select('*')
+          .neq('id', me.id)
+          .ilike('username', `%${searchQuery}%`)
+          .limit(30);
 
-      let query = sb.from('profiles').select('*').neq('id', me.id);
-      if (searchQuery) query = query.ilike('username', `%${searchQuery}%`);
-      const { data: users } = await query.limit(50);
-
-      (users || []).forEach(u => {
-        const el = document.createElement('div');
-        el.className = 'item';
-        if (currentChat?.type === 'user' && currentChat.id === u.id) {
-          el.classList.add('active');
+        if (!users || users.length === 0) {
+          list.innerHTML += '<div class="empty">Никого не найдено</div>';
+          return;
         }
 
-        const av = document.createElement('div');
-        av.className = 'avatar';
-        setAvatar(av, u.avatar_url, u.nickname);
+        users.forEach(u => {
+          const el = document.createElement('div');
+          el.className = 'item';
 
-        const info = document.createElement('div');
-        info.className = 'info';
-        const nameEl = document.createElement('div');
-        nameEl.className = 'name';
-        nameEl.textContent = u.nickname;
-        const subEl = document.createElement('div');
-        subEl.className = 'sub';
-        subEl.textContent = '@' + u.username;
-        info.appendChild(nameEl);
-        info.appendChild(subEl);
+          const av = document.createElement('div');
+          av.className = 'avatar';
+          setAvatar(av, u.avatar_url, u.nickname);
 
-        el.appendChild(av);
-        el.appendChild(info);
-        el.onclick = () => openUser(u);
-        list.appendChild(el);
-      });
+          const info = document.createElement('div');
+          info.className = 'info';
+          const nameEl = document.createElement('div');
+          nameEl.className = 'name';
+          nameEl.textContent = u.nickname;
+          const subEl = document.createElement('div');
+          subEl.className = 'sub';
+          subEl.textContent = '@' + u.username;
+          info.appendChild(nameEl);
+          info.appendChild(subEl);
 
-      if (searchQuery && (!users || users.length === 0)) {
-        list.innerHTML = '<div class="empty">Никого не найдено</div>';
+          el.appendChild(av);
+          el.appendChild(info);
+          el.appendChild(makeActionButton(u));
+          list.appendChild(el);
+        });
+        return;
       }
+
+      // Входящие заявки
+      if (incomingRequests.length > 0) {
+        list.innerHTML += '<div class="section-title">Заявки в друзья</div>';
+        const { data: requesters } = await sb.from('profiles').select('*')
+          .in('id', incomingRequests);
+
+        (requesters || []).forEach(u => {
+          const el = document.createElement('div');
+          el.className = 'item';
+
+          const av = document.createElement('div');
+          av.className = 'avatar';
+          setAvatar(av, u.avatar_url, u.nickname);
+
+          const info = document.createElement('div');
+          info.className = 'info';
+          const nameEl = document.createElement('div');
+          nameEl.className = 'name';
+          nameEl.textContent = u.nickname;
+          const subEl = document.createElement('div');
+          subEl.className = 'sub';
+          subEl.textContent = '@' + u.username;
+          info.appendChild(nameEl);
+          info.appendChild(subEl);
+
+          const actions = document.createElement('div');
+          actions.style.cssText = 'display:flex;gap:6px;flex-shrink:0;';
+          const acceptBtn = document.createElement('button');
+          acceptBtn.className = 'action-btn action-accept';
+          acceptBtn.textContent = '✓';
+          acceptBtn.title = 'Принять';
+          acceptBtn.onclick = (e) => { e.stopPropagation(); acceptRequest(u.id); };
+          const rejectBtn = document.createElement('button');
+          rejectBtn.className = 'action-btn action-reject';
+          rejectBtn.textContent = '✕';
+          rejectBtn.title = 'Отклонить';
+          rejectBtn.onclick = (e) => { e.stopPropagation(); rejectRequest(u.id); };
+          actions.appendChild(acceptBtn);
+          actions.appendChild(rejectBtn);
+
+          el.appendChild(av);
+          el.appendChild(info);
+          el.appendChild(actions);
+          list.appendChild(el);
+        });
+      }
+
+      // Общий чат
+      list.innerHTML += '<div class="section-title">Чаты</div>';
+      const g = document.createElement('div');
+      g.className = 'item global';
+      if (currentChat?.type === 'group' && currentChat.id === globalGroupId) {
+        g.classList.add('active');
+      }
+      g.innerHTML = `<div class="info"><div class="name">Все люди</div>
+        <div class="sub">Общий чат</div></div>`;
+      g.onclick = () => openGroup(globalGroupId, 'Все люди');
+      list.appendChild(g);
+
+      // Друзья
+      if (friends.length > 0) {
+        const { data: friendProfiles } = await sb.from('profiles').select('*')
+          .in('id', friends);
+
+        (friendProfiles || []).forEach(u => {
+          const el = document.createElement('div');
+          el.className = 'item';
+          if (currentChat?.type === 'user' && currentChat.id === u.id) {
+            el.classList.add('active');
+          }
+
+          const av = document.createElement('div');
+          av.className = 'avatar';
+          setAvatar(av, u.avatar_url, u.nickname);
+
+          const info = document.createElement('div');
+          info.className = 'info';
+          const nameEl = document.createElement('div');
+          nameEl.className = 'name';
+          nameEl.textContent = u.nickname;
+          const subEl = document.createElement('div');
+          subEl.className = 'sub';
+          subEl.textContent = '@' + u.username;
+          info.appendChild(nameEl);
+          info.appendChild(subEl);
+
+          el.appendChild(av);
+          el.appendChild(info);
+          el.onclick = () => openUser(u);
+          list.appendChild(el);
+        });
+      } else {
+        const hint = document.createElement('div');
+        hint.style.cssText = 'padding:16px;color:#64748b;font-size:13px;text-align:center;';
+        hint.textContent = 'Найдите друга по юзеру, чтобы начать переписку';
+        list.appendChild(hint);
+      }
+    }
+
+    function makeActionButton(u) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+
+      if (friends.includes(u.id)) {
+        btn.className += ' action-write';
+        btn.textContent = 'Написать';
+        btn.onclick = (e) => { e.stopPropagation(); openUser(u); };
+      } else if (outgoingRequests.includes(u.id)) {
+        btn.className += ' action-pending';
+        btn.textContent = 'Отправлено';
+        btn.disabled = true;
+      } else if (incomingRequests.includes(u.id)) {
+        btn.className += ' action-accept';
+        btn.textContent = 'Принять';
+        btn.onclick = (e) => { e.stopPropagation(); acceptRequest(u.id); };
+      } else {
+        btn.className += ' action-add';
+        btn.textContent = 'В друзья';
+        btn.onclick = (e) => { e.stopPropagation(); sendFriendRequest(u.id); };
+      }
+      return btn;
+    }
+
+    // ---------- Действия с заявками ----------
+    async function sendFriendRequest(userId) {
+      const { error } = await sb.from('friend_requests')
+        .insert({ from_user: me.id, to_user: userId });
+      if (error) { alert('Ошибка: ' + error.message); return; }
+      await loadFriendsData();
+      await renderList(document.getElementById('search').value.trim());
+    }
+
+    async function acceptRequest(userId) {
+      const { error } = await sb.from('friend_requests')
+        .update({ status: 'accepted', updated_at: new Date().toISOString() })
+        .eq('from_user', userId).eq('to_user', me.id).eq('status', 'pending');
+      if (error) { alert('Ошибка: ' + error.message); return; }
+      await loadFriendsData();
+      await renderList(document.getElementById('search').value.trim());
+    }
+
+    async function rejectRequest(userId) {
+      const { error } = await sb.from('friend_requests')
+        .delete()
+        .eq('from_user', userId).eq('to_user', me.id).eq('status', 'pending');
+      if (error) { alert('Ошибка: ' + error.message); return; }
+      await loadFriendsData();
+      await renderList(document.getElementById('search').value.trim());
     }
 
     // ---------- Открытие чатов ----------
@@ -517,15 +625,11 @@
     async function fillSenders(msgs) {
       const ids = [...new Set(msgs.map(m => m.sender_id))];
       if (!ids.length) return;
-
       const { data, error } = await sb.from('profiles')
         .select('id,nickname,username,avatar_url').in('id', ids);
-
-      if (error) { console.error('Не удалось загрузить профили:', error); return; }
-
+      if (error) return;
       const map = {};
       (data || []).forEach(p => { map[p.id] = p; });
-
       msgs.forEach(m => {
         const p = map[m.sender_id];
         m._nickname = p ? p.nickname : 'Неизвестный';
@@ -540,7 +644,6 @@
       if (empty) empty.remove();
 
       const own = m.sender_id === me.id;
-
       const div = document.createElement('div');
       div.className = 'msg' + (own ? ' own' : '');
 
@@ -554,9 +657,8 @@
 
       const who = document.createElement('div');
       who.className = 'who';
-      if (own) {
-        who.textContent = 'Вы';
-      } else {
+      if (own) who.textContent = 'Вы';
+      else {
         const nick = m._nickname || 'Неизвестный';
         const uname = m._username ? ' @' + m._username : '';
         who.textContent = nick + uname;
@@ -588,22 +690,22 @@
       const { error } = await sb.from('messages').insert(row);
       if (error) { alert('Ошибка отправки: ' + error.message); return; }
 
-      appendMessage({ ...row, _nickname: me.nickname, _username: me.username, _avatar: me.avatar_url });
+      appendMessage({ ...row, _nickname: me.nickname,
+                      _username: me.username, _avatar: me.avatar_url });
     }
 
     document.getElementById('input').addEventListener('keydown', e => {
       if (e.key === 'Enter') send();
     });
 
-    // ---------- Realtime ----------
+    // ---------- Realtime: сообщения ----------
     function subscribeToMessages() {
-      channel = sb.channel('messages-rt')
+      channelMessages = sb.channel('messages-rt')
         .on('postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'messages' },
           async (payload) => {
             const m = payload.new;
             if (!currentChat) return;
-
             const relevant =
               (currentChat.type === 'group' && m.group_id === currentChat.id) ||
               (currentChat.type === 'user' && (
@@ -612,26 +714,22 @@
               ));
             if (!relevant) return;
             if (m.sender_id === me.id) return;
-
             await fillSenders([m]);
             appendMessage(m);
           })
-        .subscribe((status, err) => {
-          console.log('Realtime:', status, err);
-          if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-            let dbg = document.getElementById('rt-debug');
-            if (!dbg) {
-              dbg = document.createElement('div');
-              dbg.id = 'rt-debug';
-              dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#7f1d1d;color:#fff;font-size:11px;padding:4px;z-index:9999;';
-              document.body.appendChild(dbg);
-            }
-            dbg.textContent = 'Realtime: ' + status;
-          } else {
-            const dbg = document.getElementById('rt-debug');
-            if (dbg) dbg.remove();
-          }
-        });
+        .subscribe();
+    }
+
+    // ---------- Realtime: заявки ----------
+    function subscribeToRequests() {
+      channelRequests = sb.channel('requests-rt')
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'friend_requests' },
+          async () => {
+            await loadFriendsData();
+            await renderList(document.getElementById('search').value.trim());
+          })
+        .subscribe();
     }
 
     // ---------- Профиль ----------
@@ -657,11 +755,6 @@
         msg.className = 'modal-msg err';
         return;
       }
-      if (nick.length > 50) {
-        msg.textContent = 'Ник слишком длинный (макс 50)';
-        msg.className = 'modal-msg err';
-        return;
-      }
 
       msg.textContent = 'Сохраняем...';
       const { error } = await sb.from('profiles')
@@ -676,7 +769,6 @@
       me.nickname = nick;
       renderMe();
       await renderList(document.getElementById('search').value.trim());
-
       msg.textContent = 'Сохранено!';
       msg.className = 'modal-msg ok';
       setTimeout(closeProfile, 800);
@@ -685,32 +777,25 @@
     async function uploadAvatar(input) {
       const file = input.files[0];
       if (!file) return;
-
       const msg = document.getElementById('profile-msg');
       msg.className = 'modal-msg'; msg.textContent = 'Загружаем фото...';
 
-      // Проверка размера — макс 2 МБ
       if (file.size > 2 * 1024 * 1024) {
         msg.textContent = 'Фото больше 2 МБ';
-        msg.className = 'modal-msg err';
-        return;
+        msg.className = 'modal-msg err'; return;
       }
 
-      // Имя файла: avatars/USER_ID/avatar.jpg
       const ext = file.name.split('.').pop() || 'jpg';
       const path = me.id + '/avatar.' + ext;
 
       const { error: upErr } = await sb.storage
-        .from('avatars')
-        .upload(path, file, { upsert: true, contentType: file.type });
+        .from('avatars').upload(path, file, { upsert: true, contentType: file.type });
 
       if (upErr) {
         msg.textContent = 'Ошибка загрузки: ' + upErr.message;
-        msg.className = 'modal-msg err';
-        return;
+        msg.className = 'modal-msg err'; return;
       }
 
-      // Получаем публичную ссылку + добавляем ?t= чтобы обновить кэш
       const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
       const url = urlData.publicUrl + '?t=' + Date.now();
 
@@ -719,15 +804,13 @@
 
       if (dbErr) {
         msg.textContent = 'Ошибка сохранения: ' + dbErr.message;
-        msg.className = 'modal-msg err';
-        return;
+        msg.className = 'modal-msg err'; return;
       }
 
       me.avatar_url = url;
       setAvatar(document.getElementById('profile-avatar'), url, me.nickname);
       renderMe();
       await renderList(document.getElementById('search').value.trim());
-
       msg.textContent = 'Фото обновлено!';
       msg.className = 'modal-msg ok';
     }
@@ -736,10 +819,6 @@
     function logout() {
       sb.auth.signOut().then(() => location.href = 'index.html');
     }
-
-    // ---------- Клик по своему профилю ----------
-    document.querySelector('.me-info').addEventListener('click', openProfile);
-    document.querySelector('.me-info').style.cursor = 'pointer';
 
     // ---------- Фикс высоты под клавиатуру ----------
     if (window.visualViewport) {
