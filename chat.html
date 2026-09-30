@@ -442,7 +442,18 @@
             await fillNicknames([m]);
             appendMessage(m);
           })
-        .subscribe();
+        .subscribe((status, err) => {
+  console.log('Realtime:', status, err);
+  // Показать на странице для отладки на телефоне
+  let dbg = document.getElementById('rt-debug');
+  if (!dbg) {
+    dbg = document.createElement('div');
+    dbg.id = 'rt-debug';
+    dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-size:11px;padding:4px;z-index:9999;';
+    document.body.appendChild(dbg);
+  }
+  dbg.textContent = 'Realtime: ' + status + (err ? ' | ' + err.message : '');
+});
     }
 
     // ---------- Выход ----------
