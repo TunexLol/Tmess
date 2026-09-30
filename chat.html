@@ -2,53 +2,147 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>TMessenger</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0;
-           margin: 0; height: 100dvh; display: flex; overflow: hidden; }
 
-    .sidebar { width: 280px; background: #1e293b; border-right: 1px solid #334155;
-               display: flex; flex-direction: column; }
-    .sidebar h2 { padding: 16px; margin: 0; font-size: 16px; border-bottom: 1px solid #334155; }
-    .me { padding: 12px 16px; font-size: 13px; color: #94a3b8;
-          border-bottom: 1px solid #334155; display: flex; justify-content: space-between;
-          gap: 8px; }
+    html, body {
+      height: 100%;
+      overscroll-behavior: none;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #1e293b;
+      border-right: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 {
+      padding: 16px;
+      margin: 0;
+      font-size: 16px;
+      border-bottom: 1px solid #334155;
+    }
+    .me {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #94a3b8;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
     .me a { color: #f87171; text-decoration: none; cursor: pointer; flex-shrink: 0; }
     .search { padding: 12px; border-bottom: 1px solid #334155; }
-    .search input { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #334155;
-                    background: #0f172a; color: #e2e8f0; }
-    .list { flex: 1; overflow-y: auto; }
-    .item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1e293b; }
+    .search input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+    .list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #1e293b;
+    }
     .item:hover { background: #334155; }
     .item.active { background: #334155; }
     .item .name { font-weight: 600; font-size: 14px; }
     .item .sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
     .item.global .name::before { content: '🌐 '; }
 
-    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .header { padding: 16px; border-bottom: 1px solid #334155; font-weight: 600;
-              display: flex; align-items: center; gap: 8px; }
-    .back { display: none; background: none; border: none; color: #60a5fa;
-            font-size: 20px; cursor: pointer; padding: 0 4px 0 0; }
-    .messages { flex: 1; overflow-y: auto; padding: 16px; }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .header {
+      padding: 16px;
+      border-bottom: 1px solid #334155;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .back {
+      display: none;
+      background: none;
+      border: none;
+      color: #60a5fa;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 0 6px 0 0;
+      line-height: 1;
+    }
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px;
+    }
     .msg { margin-bottom: 12px; max-width: 75%; }
-    .msg .who { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .msg .bubble { background: #334155; padding: 8px 12px; border-radius: 12px;
-                   word-wrap: break-word; }
+    .msg .who {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .msg .bubble {
+      background: #334155;
+      padding: 8px 12px;
+      border-radius: 12px;
+      word-wrap: break-word;
+    }
     .msg.own { margin-left: auto; }
     .msg.own .bubble { background: #3b82f6; }
     .msg.own .who { text-align: right; }
-    .composer { padding: 12px; border-top: 1px solid #334155; display: flex; gap: 8px; }
-    .composer input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #334155;
-                      background: #0f172a; color: #e2e8f0; min-width: 0; }
-    .composer button { padding: 10px 20px; border: none; border-radius: 6px;
-                       background: #3b82f6; color: white; font-weight: 600; cursor: pointer; }
+    .composer {
+      padding: 12px;
+      border-top: 1px solid #334155;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .composer input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-width: 0;
+    }
+    .composer button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #3b82f6;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
     .composer button:disabled { opacity: 0.5; cursor: default; }
     .empty { padding: 32px; text-align: center; color: #64748b; }
 
-    /* Мобильная версия: показываем либо список, либо чат */
     @media (max-width: 640px) {
       .sidebar { width: 100%; }
       .main { display: none; }
@@ -102,7 +196,6 @@
         .select('*').eq('id', session.user.id).single();
 
       if (error || !profile) {
-        // Профиль не создался триггером — создаём вручную
         const meta = session.user.user_metadata || {};
         const { data: created } = await sb.from('profiles').insert({
           id: session.user.id,
@@ -132,6 +225,7 @@
           .select().single();
         g = created;
       }
+      if (!g) { console.error('Не удалось создать группу'); return; }
       globalGroupId = g.id;
 
       await sb.from('group_members').upsert(
@@ -140,7 +234,7 @@
       );
     }
 
-    // ---------- Поиск и список ----------
+    // ---------- Список чатов ----------
     let searchTimer = null;
     document.getElementById('search').addEventListener('input', e => {
       clearTimeout(searchTimer);
@@ -172,9 +266,14 @@
         if (currentChat?.type === 'user' && currentChat.id === u.id) {
           el.classList.add('active');
         }
-        el.innerHTML = `<div class="name"></div><div class="sub"></div>`;
-        el.querySelector('.name').textContent = u.nickname;
-        el.querySelector('.sub').textContent = '@' + u.username;
+        const nameEl = document.createElement('div');
+        nameEl.className = 'name';
+        nameEl.textContent = u.nickname;
+        const subEl = document.createElement('div');
+        subEl.className = 'sub';
+        subEl.textContent = '@' + u.username;
+        el.appendChild(nameEl);
+        el.appendChild(subEl);
         el.onclick = () => openUser(u);
         list.appendChild(el);
       });
@@ -241,8 +340,34 @@
         box.innerHTML = '<div class="empty">Сообщений пока нет</div>';
         return;
       }
+
+      await fillNicknames(data);
       data.forEach(m => appendMessage(m));
       box.scrollTop = box.scrollHeight;
+    }
+
+    async function fillNicknames(msgs) {
+      const ids = [...new Set(msgs.map(m => m.sender_id))];
+      if (!ids.length) return;
+
+      const { data, error } = await sb.from('profiles')
+        .select('id,nickname,username').in('id', ids);
+
+      if (error) {
+        console.error('Не удалось загрузить профили:', error);
+        return;
+      }
+
+      const map = {};
+      (data || []).forEach(p => {
+        map[p.id] = { nickname: p.nickname, username: p.username };
+      });
+
+      msgs.forEach(m => {
+        const info = map[m.sender_id];
+        m._nickname = info ? info.nickname : 'Неизвестный';
+        m._username = info ? info.username : '';
+      });
     }
 
     function appendMessage(m) {
@@ -251,12 +376,19 @@
       if (empty) empty.remove();
 
       const own = m.sender_id === me.id;
+
       const div = document.createElement('div');
       div.className = 'msg' + (own ? ' own' : '');
 
       const who = document.createElement('div');
       who.className = 'who';
-      who.textContent = own ? 'Вы' : (m._nickname || '...');
+      if (own) {
+        who.textContent = 'Вы';
+      } else {
+        const nick = m._nickname || 'Неизвестный';
+        const uname = m._username ? ' @' + m._username : '';
+        who.textContent = nick + uname;
+      }
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
@@ -266,16 +398,6 @@
       div.appendChild(bubble);
       box.appendChild(div);
       box.scrollTop = box.scrollHeight;
-    }
-
-    // Подтягиваем ники одним запросом
-    async function fillNicknames(msgs) {
-      const ids = [...new Set(msgs.map(m => m.sender_id))].filter(id => id !== me.id);
-      if (!ids.length) return;
-      const { data } = await sb.from('profiles').select('id,nickname').in('id', ids);
-      const map = {};
-      (data || []).forEach(p => map[p.id] = p.nickname);
-      msgs.forEach(m => { m._nickname = map[m.sender_id] || '...'; });
     }
 
     // ---------- Отправка ----------
@@ -292,8 +414,7 @@
       const { error } = await sb.from('messages').insert(row);
       if (error) { alert('Ошибка отправки: ' + error.message); return; }
 
-      // Сразу показать у себя
-      appendMessage({ ...row, _nickname: me.nickname });
+      appendMessage({ ...row, _nickname: me.nickname, _username: me.username });
     }
 
     document.getElementById('input').addEventListener('keydown', e => {
@@ -318,27 +439,28 @@
             if (!relevant) return;
             if (m.sender_id === me.id) return;
 
-            if (!m._nickname) await fillNicknames([m]);
+            await fillNicknames([m]);
             appendMessage(m);
           })
         .subscribe();
     }
 
+    // ---------- Выход ----------
     function logout() {
       sb.auth.signOut().then(() => location.href = 'index.html');
     }
 
+    // ---------- Фикс высоты под клавиатуру ----------
+    if (window.visualViewport) {
+      const setVH = () => {
+        document.body.style.height = window.visualViewport.height + 'px';
+      };
+      window.visualViewport.addEventListener('resize', setVH);
+      window.visualViewport.addEventListener('scroll', setVH);
+      setVH();
+    }
+
     init();
   </script>
-  <script>
-if (window.visualViewport) {
-  const setVH = () => {
-    document.body.style.height = window.visualViewport.height + 'px';
-  };
-  window.visualViewport.addEventListener('resize', setVH);
-  window.visualViewport.addEventListener('scroll', setVH);
-  setVH();
-}
-  </script>
 </body>
-</html>
+  </html>
