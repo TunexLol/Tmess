@@ -330,5 +330,15 @@
 
     init();
   </script>
+  <script>
+if (window.visualViewport) {
+  const setVH = () => {
+    document.body.style.height = window.visualViewport.height + 'px';
+  };
+  window.visualViewport.addEventListener('resize', setVH);
+  window.visualViewport.addEventListener('scroll', setVH);
+  setVH();
+}
+  </script>
 </body>
 </html>
