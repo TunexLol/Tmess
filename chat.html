@@ -6,12 +6,7 @@
   <title>TMessenger</title>
   <style>
     * { box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      overscroll-behavior: none;
-    }
-
+    html, body { height: 100%; overscroll-behavior: none; }
     body {
       font-family: system-ui, sans-serif;
       background: #0f172a;
@@ -25,6 +20,7 @@
       width: 100%;
     }
 
+    /* ---------- Sidebar ---------- */
     .sidebar {
       width: 280px;
       background: #1e293b;
@@ -45,9 +41,39 @@
       border-bottom: 1px solid #334155;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 8px;
     }
-    .me a { color: #f87171; text-decoration: none; cursor: pointer; flex-shrink: 0; }
+    .me-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .me-info span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .me a { color: #f87171; text-decoration: none; cursor: pointer; flex-shrink: 0; font-size: 12px; }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #94a3b8;
+      flex-shrink: 0;
+      overflow: hidden;
+      font-size: 14px;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar.lg { width: 80px; height: 80px; font-size: 32px; }
+
     .search { padding: 12px; border-bottom: 1px solid #334155; }
     .search input {
       width: 100%;
@@ -62,21 +88,21 @@
       padding: 12px 16px;
       cursor: pointer;
       border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .item:hover { background: #334155; }
     .item.active { background: #334155; }
-    .item .name { font-weight: 600; font-size: 14px; }
+    .item .info { min-width: 0; flex: 1; }
+    .item .name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .item .sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
     .item.global .name::before { content: '🌐 '; }
 
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
+    /* ---------- Main ---------- */
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
     .header {
-      padding: 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid #334155;
       font-weight: 600;
       display: flex;
@@ -100,21 +126,19 @@
       -webkit-overflow-scrolling: touch;
       padding: 16px;
     }
-    .msg { margin-bottom: 12px; max-width: 75%; }
-    .msg .who {
-      font-size: 12px;
-      color: #94a3b8;
-      margin-bottom: 4px;
-    }
+    .msg { margin-bottom: 12px; max-width: 75%; display: flex; gap: 8px; }
+    .msg .body { min-width: 0; }
+    .msg .who { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
     .msg .bubble {
       background: #334155;
       padding: 8px 12px;
       border-radius: 12px;
       word-wrap: break-word;
     }
-    .msg.own { margin-left: auto; }
+    .msg.own { margin-left: auto; flex-direction: row-reverse; }
     .msg.own .bubble { background: #3b82f6; }
     .msg.own .who { text-align: right; }
+
     .composer {
       padding: 12px;
       border-top: 1px solid #334155;
@@ -143,6 +167,82 @@
     .composer button:disabled { opacity: 0.5; cursor: default; }
     .empty { padding: 32px; text-align: center; color: #64748b; }
 
+    /* ---------- Модальное окно профиля ---------- */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h3 { margin: 0 0 20px; font-size: 18px; }
+    .modal label { display: block; font-size: 13px; margin: 12px 0 4px; color: #94a3b8; }
+    .modal input[type=text] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 15px;
+    }
+    .modal input:disabled {
+      background: #0f172a;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+    .avatar-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .avatar-edit-btn {
+      padding: 8px 16px;
+      background: #334155;
+      color: #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      border: none;
+    }
+    .avatar-edit-btn:hover { background: #475569; }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .btn-save { background: #3b82f6; color: white; }
+    .btn-save:hover { background: #2563eb; }
+    .btn-cancel { background: #334155; color: #e2e8f0; }
+    .btn-cancel:hover { background: #475569; }
+    .modal-msg { margin-top: 12px; font-size: 13px; }
+    .modal-msg.err { color: #f87171; }
+    .modal-msg.ok { color: #4ade80; }
+
     @media (max-width: 640px) {
       .sidebar { width: 100%; }
       .main { display: none; }
@@ -156,7 +256,10 @@
   <div class="sidebar">
     <h2>TMessenger</h2>
     <div class="me">
-      <span id="me-info"></span>
+      <div class="me-info">
+        <div class="avatar" id="me-avatar"></div>
+        <span id="me-info">Загрузка...</span>
+      </div>
       <a onclick="logout()">Выйти</a>
     </div>
     <div class="search">
@@ -179,6 +282,33 @@
     </div>
   </div>
 
+  <!-- Модальное окно профиля -->
+  <div class="modal-bg" id="profile-modal">
+    <div class="modal">
+      <h3>Профиль</h3>
+      <div class="avatar-block">
+        <div class="avatar lg" id="profile-avatar"></div>
+        <label for="avatar-file" class="avatar-edit-btn">
+          Изменить фото
+        </label>
+        <input type="file" id="avatar-file" accept="image/*"
+               style="display:none" onchange="uploadAvatar(this)">
+      </div>
+
+      <label>Ник (отображаемое имя)</label>
+      <input type="text" id="profile-nickname" placeholder="Ваш ник">
+
+      <label>Юзер (нельзя изменить)</label>
+      <input type="text" id="profile-username" disabled>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeProfile()">Отмена</button>
+        <button class="btn-save" onclick="saveProfile()">Сохранить</button>
+      </div>
+      <div class="modal-msg" id="profile-msg"></div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <script src="app.js"></script>
   <script>
@@ -186,6 +316,28 @@
     let globalGroupId = null;
     let currentChat = null;
     let channel = null;
+
+    // ---------- Утилиты ----------
+    function initials(name) {
+      if (!name) return '?';
+      return name.trim().charAt(0).toUpperCase();
+    }
+
+    function avatarHTML(url, name, cls) {
+      if (url) return `<img src="${url}" alt="">`;
+      return initials(name);
+    }
+
+    function setAvatar(el, url, name) {
+      el.innerHTML = '';
+      if (url) {
+        const img = document.createElement('img');
+        img.src = url;
+        el.appendChild(img);
+      } else {
+        el.textContent = initials(name);
+      }
+    }
 
     // ---------- Инициализация ----------
     async function init() {
@@ -207,12 +359,17 @@
         me = profile;
       }
 
-      document.getElementById('me-info').textContent =
-        me.nickname + ' (@' + me.username + ')';
+      renderMe();
 
       await ensureGlobalGroup();
       await renderList();
       subscribeToMessages();
+    }
+
+    function renderMe() {
+      document.getElementById('me-info').textContent =
+        me.nickname + ' (@' + me.username + ')';
+      setAvatar(document.getElementById('me-avatar'), me.avatar_url, me.nickname);
     }
 
     async function ensureGlobalGroup() {
@@ -251,7 +408,8 @@
         if (currentChat?.type === 'group' && currentChat.id === globalGroupId) {
           g.classList.add('active');
         }
-        g.innerHTML = `<div class="name">Все люди</div><div class="sub">Общий чат</div>`;
+        g.innerHTML = `<div class="info"><div class="name">Все люди</div>
+          <div class="sub">Общий чат</div></div>`;
         g.onclick = () => openGroup(globalGroupId, 'Все люди');
         list.appendChild(g);
       }
@@ -266,14 +424,24 @@
         if (currentChat?.type === 'user' && currentChat.id === u.id) {
           el.classList.add('active');
         }
+
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        setAvatar(av, u.avatar_url, u.nickname);
+
+        const info = document.createElement('div');
+        info.className = 'info';
         const nameEl = document.createElement('div');
         nameEl.className = 'name';
         nameEl.textContent = u.nickname;
         const subEl = document.createElement('div');
         subEl.className = 'sub';
         subEl.textContent = '@' + u.username;
-        el.appendChild(nameEl);
-        el.appendChild(subEl);
+        info.appendChild(nameEl);
+        info.appendChild(subEl);
+
+        el.appendChild(av);
+        el.appendChild(info);
         el.onclick = () => openUser(u);
         list.appendChild(el);
       });
@@ -341,32 +509,28 @@
         return;
       }
 
-      await fillNicknames(data);
+      await fillSenders(data);
       data.forEach(m => appendMessage(m));
       box.scrollTop = box.scrollHeight;
     }
 
-    async function fillNicknames(msgs) {
+    async function fillSenders(msgs) {
       const ids = [...new Set(msgs.map(m => m.sender_id))];
       if (!ids.length) return;
 
       const { data, error } = await sb.from('profiles')
-        .select('id,nickname,username').in('id', ids);
+        .select('id,nickname,username,avatar_url').in('id', ids);
 
-      if (error) {
-        console.error('Не удалось загрузить профили:', error);
-        return;
-      }
+      if (error) { console.error('Не удалось загрузить профили:', error); return; }
 
       const map = {};
-      (data || []).forEach(p => {
-        map[p.id] = { nickname: p.nickname, username: p.username };
-      });
+      (data || []).forEach(p => { map[p.id] = p; });
 
       msgs.forEach(m => {
-        const info = map[m.sender_id];
-        m._nickname = info ? info.nickname : 'Неизвестный';
-        m._username = info ? info.username : '';
+        const p = map[m.sender_id];
+        m._nickname = p ? p.nickname : 'Неизвестный';
+        m._username = p ? p.username : '';
+        m._avatar = p ? p.avatar_url : null;
       });
     }
 
@@ -379,6 +543,14 @@
 
       const div = document.createElement('div');
       div.className = 'msg' + (own ? ' own' : '');
+
+      const av = document.createElement('div');
+      av.className = 'avatar';
+      setAvatar(av, own ? me.avatar_url : m._avatar,
+                       own ? me.nickname : m._nickname);
+
+      const body = document.createElement('div');
+      body.className = 'body';
 
       const who = document.createElement('div');
       who.className = 'who';
@@ -394,8 +566,10 @@
       bubble.className = 'bubble';
       bubble.textContent = m.content;
 
-      div.appendChild(who);
-      div.appendChild(bubble);
+      body.appendChild(who);
+      body.appendChild(bubble);
+      div.appendChild(av);
+      div.appendChild(body);
       box.appendChild(div);
       box.scrollTop = box.scrollHeight;
     }
@@ -414,7 +588,7 @@
       const { error } = await sb.from('messages').insert(row);
       if (error) { alert('Ошибка отправки: ' + error.message); return; }
 
-      appendMessage({ ...row, _nickname: me.nickname, _username: me.username });
+      appendMessage({ ...row, _nickname: me.nickname, _username: me.username, _avatar: me.avatar_url });
     }
 
     document.getElementById('input').addEventListener('keydown', e => {
@@ -439,27 +613,133 @@
             if (!relevant) return;
             if (m.sender_id === me.id) return;
 
-            await fillNicknames([m]);
+            await fillSenders([m]);
             appendMessage(m);
           })
         .subscribe((status, err) => {
-  console.log('Realtime:', status, err);
-  // Показать на странице для отладки на телефоне
-  let dbg = document.getElementById('rt-debug');
-  if (!dbg) {
-    dbg = document.createElement('div');
-    dbg.id = 'rt-debug';
-    dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-size:11px;padding:4px;z-index:9999;';
-    document.body.appendChild(dbg);
-  }
-  dbg.textContent = 'Realtime: ' + status + (err ? ' | ' + err.message : '');
-});
+          console.log('Realtime:', status, err);
+          if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            let dbg = document.getElementById('rt-debug');
+            if (!dbg) {
+              dbg = document.createElement('div');
+              dbg.id = 'rt-debug';
+              dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#7f1d1d;color:#fff;font-size:11px;padding:4px;z-index:9999;';
+              document.body.appendChild(dbg);
+            }
+            dbg.textContent = 'Realtime: ' + status;
+          } else {
+            const dbg = document.getElementById('rt-debug');
+            if (dbg) dbg.remove();
+          }
+        });
+    }
+
+    // ---------- Профиль ----------
+    function openProfile() {
+      document.getElementById('profile-nickname').value = me.nickname;
+      document.getElementById('profile-username').value = me.username;
+      setAvatar(document.getElementById('profile-avatar'), me.avatar_url, me.nickname);
+      document.getElementById('profile-msg').textContent = '';
+      document.getElementById('profile-modal').classList.add('open');
+    }
+
+    function closeProfile() {
+      document.getElementById('profile-modal').classList.remove('open');
+    }
+
+    async function saveProfile() {
+      const nick = document.getElementById('profile-nickname').value.trim();
+      const msg = document.getElementById('profile-msg');
+      msg.className = 'modal-msg'; msg.textContent = '';
+
+      if (!nick) {
+        msg.textContent = 'Ник не может быть пустым';
+        msg.className = 'modal-msg err';
+        return;
+      }
+      if (nick.length > 50) {
+        msg.textContent = 'Ник слишком длинный (макс 50)';
+        msg.className = 'modal-msg err';
+        return;
+      }
+
+      msg.textContent = 'Сохраняем...';
+      const { error } = await sb.from('profiles')
+        .update({ nickname: nick }).eq('id', me.id);
+
+      if (error) {
+        msg.textContent = 'Ошибка: ' + error.message;
+        msg.className = 'modal-msg err';
+        return;
+      }
+
+      me.nickname = nick;
+      renderMe();
+      await renderList(document.getElementById('search').value.trim());
+
+      msg.textContent = 'Сохранено!';
+      msg.className = 'modal-msg ok';
+      setTimeout(closeProfile, 800);
+    }
+
+    async function uploadAvatar(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const msg = document.getElementById('profile-msg');
+      msg.className = 'modal-msg'; msg.textContent = 'Загружаем фото...';
+
+      // Проверка размера — макс 2 МБ
+      if (file.size > 2 * 1024 * 1024) {
+        msg.textContent = 'Фото больше 2 МБ';
+        msg.className = 'modal-msg err';
+        return;
+      }
+
+      // Имя файла: avatars/USER_ID/avatar.jpg
+      const ext = file.name.split('.').pop() || 'jpg';
+      const path = me.id + '/avatar.' + ext;
+
+      const { error: upErr } = await sb.storage
+        .from('avatars')
+        .upload(path, file, { upsert: true, contentType: file.type });
+
+      if (upErr) {
+        msg.textContent = 'Ошибка загрузки: ' + upErr.message;
+        msg.className = 'modal-msg err';
+        return;
+      }
+
+      // Получаем публичную ссылку + добавляем ?t= чтобы обновить кэш
+      const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+      const url = urlData.publicUrl + '?t=' + Date.now();
+
+      const { error: dbErr } = await sb.from('profiles')
+        .update({ avatar_url: url }).eq('id', me.id);
+
+      if (dbErr) {
+        msg.textContent = 'Ошибка сохранения: ' + dbErr.message;
+        msg.className = 'modal-msg err';
+        return;
+      }
+
+      me.avatar_url = url;
+      setAvatar(document.getElementById('profile-avatar'), url, me.nickname);
+      renderMe();
+      await renderList(document.getElementById('search').value.trim());
+
+      msg.textContent = 'Фото обновлено!';
+      msg.className = 'modal-msg ok';
     }
 
     // ---------- Выход ----------
     function logout() {
       sb.auth.signOut().then(() => location.href = 'index.html');
     }
+
+    // ---------- Клик по своему профилю ----------
+    document.querySelector('.me-info').addEventListener('click', openProfile);
+    document.querySelector('.me-info').style.cursor = 'pointer';
 
     // ---------- Фикс высоты под клавиатуру ----------
     if (window.visualViewport) {
